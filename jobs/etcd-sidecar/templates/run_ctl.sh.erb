@@ -1,0 +1,27 @@
+#!/bin/bash -exu
+
+RUN_DIR=/var/vcap/sys/run/etcd-sidecar
+PIDFILE=${RUN_DIR}/etcd-sidecar.pid
+LOG_DIR=/var/vcap/sys/log/etcd-sidecar
+
+case ${1} in
+  start)
+      /var/vcap/jobs/etcd-sidecar/bin/run \
+        2> >(tee -a ${LOG_DIR}/etcd-sidecar.stderr.log | logger -p user.error -t vcap.etcd-sidecar) \
+        1> >(tee -a ${LOG_DIR}/etcd-sidecar.stdout.log | logger -p user.info  -t vcap.etcd-sidecar) &
+
+      echo "${!}" > "${PIDFILE}"
+  ;;
+
+  stop)
+      local pid
+      pid="$(cat "${PIDFILE}")"
+
+      kill -9 "${pid}"
+      rm "${PIDFILE}"
+  ;;
+
+  *)
+  echo "Usage: ctl {start|stop}"
+  ;;
+esac

@@ -1,0 +1,14 @@
+---
+name: etcd-sidecar
+templates:
+  run.sh.erb: bin/run
+  run_ctl.sh.erb: bin/run_ctl
+  pre-start.erb: bin/pre-start
+
+packages: []
+
+properties:
+  etcd.machines:
+    description: ""
+    default: []
+
